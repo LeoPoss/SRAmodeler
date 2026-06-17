@@ -1,0 +1,191 @@
+{
+	"requirements": [
+		{
+			"id": "1.1.1",
+			"requirement": "Verify that the IoT system is developed with the level of security (L1, L2, or L3) applicable to its capabilities",
+			"question": "Is the IoT system developed with the level of security (L1, L2, or L3) applicable to its capabilities?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Application and Ecosystem Design",
+			"external_id": "ISVS-v1.0-1.1.1",
+			"bpmn_mapping": {
+				"task": false,
+				"message_event": false,
+				"pool": true,
+				"lane": false
+			},
+			"further_specification": "security_level",
+			"bpmn_annotation": "Security Level",
+			"bpmn_template": "Dropdown[L1, L2, L3]"
+		},
+		{
+			"id": "1.1.2",
+			"requirement": "Verify that all components and communication channels in the IoT ecosystem have been identified",
+			"question": "Have all components and communication channels in the IoT ecosystem been identified?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Application and Ecosystem Design",
+			"external_id": "ISVS-v1.0-1.1.2",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": true,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "essential_component",
+			"bpmn_annotation": "Essential Component",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "1.1.3",
+			"requirement": "Verify that threat modeling is used as part of each product introduction design",
+			"question": "Is threat modeling used as part of each product introduction design?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Application and Ecosystem Design",
+			"external_id": "ISVS-v1.0-1.1.3",
+			"bpmn_mapping": {
+				"task": false,
+				"message_event": false,
+				"pool": true,
+				"lane": false
+			},
+			"further_specification": "threat_model_reference",
+			"bpmn_annotation": "Threat Model Reference",
+			"bpmn_template": "TextInput[URL/Document ID]"
+		},
+		{
+			"id": "1.2.1",
+			"requirement": "Verify that the device is able to detect physical tampering attempts",
+			"question": "Is the device able to detect physical tampering attempts?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Device Security",
+			"external_id": "ISVS-v1.0-1.2.1",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": false,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "tamper_detection",
+			"bpmn_annotation": "Tamper Detection",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "1.2.2",
+			"requirement": "Verify that sensitive data is encrypted at rest",
+			"question": "Is sensitive data encrypted at rest?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Data Protection",
+			"external_id": "ISVS-v1.0-1.2.2",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": false,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "encryption_at_rest",
+			"bpmn_annotation": "Encryption at Rest",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "1.2.3",
+			"requirement": "Verify that sensitive data is encrypted in transit",
+			"question": "Is sensitive data encrypted in transit?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Data Protection",
+			"external_id": "ISVS-v1.0-1.2.3",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": true,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "encryption_in_transit",
+			"bpmn_annotation": "Encryption in Transit",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "1.3.1",
+			"requirement": "Verify that authentication mechanisms are implemented for device access",
+			"question": "Are authentication mechanisms implemented for device access?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Authentication",
+			"external_id": "ISVS-v1.0-1.3.1",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": false,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "authentication_mechanism",
+			"bpmn_annotation": "Authentication Mechanism",
+			"bpmn_template": "Dropdown[None, Password, Biometric, MFA, Certificate]"
+		},
+		{
+			"id": "1.3.2",
+			"requirement": "Verify that authorization controls are enforced at each access point",
+			"question": "Are authorization controls enforced at each access point?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Authorization",
+			"external_id": "ISVS-v1.0-1.3.2",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": false,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "authorization_enforced",
+			"bpmn_annotation": "Authorization Enforced",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "1.4.1",
+			"requirement": "Verify that software/firmware updates are signed and verified before installation",
+			"question": "Are software/firmware updates signed and verified before installation?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Software Updates",
+			"external_id": "ISVS-v1.0-1.4.1",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": false,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "signed_updates",
+			"bpmn_annotation": "Signed Updates",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "1.4.2",
+			"requirement": "Verify that update mechanisms support rollback in case of failure",
+			"question": "Do update mechanisms support rollback in case of failure?",
+			"category": "IoT Ecosystem Requirements",
+			"subcategory": "Software Updates",
+			"external_id": "ISVS-v1.0-1.4.2",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": false,
+				"pool": false,
+				"lane": false
+			},
+			"further_specification": "rollback_support",
+			"bpmn_annotation": "Rollback Support",
+			"bpmn_template": "BooleanToggle"
+		},
+		{
+			"id": "2.2.1",
+			"requirement": "Verify that the system enforces access control policies for all protected resources",
+			"question": "Does the system enforce access control policies for all protected resources?",
+			"category": "Use Control",
+			"subcategory": "Access Control",
+			"external_id": "ISVS-v1.0-2.2.1",
+			"bpmn_mapping": {
+				"task": true,
+				"message_event": true,
+				"pool": true,
+				"lane": false
+			},
+			"further_specification": "access_control_enforced",
+			"bpmn_annotation": "Access Control Enforced",
+			"bpmn_template": "BooleanToggle"
+		}
+	]
+}

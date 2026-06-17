@@ -1,0 +1,11 @@
+services:
+  sra:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - sra_data:/data
+    restart: unless-stopped
+
+volumes:
+  sra_data:

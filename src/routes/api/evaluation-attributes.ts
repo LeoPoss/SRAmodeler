@@ -1,0 +1,94 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { like, eq } from "drizzle-orm";
+import { db } from "#/db/connection";
+import { evaluationAttributes, complianceRequirementAttributes, complianceRequirements } from "#/db/schema";
+
+function typeToApplicableFor(type: string): string {
+  switch (type) {
+    case "task": case "bpmn:Task": return "Task";
+    case "message_event": case "bpmn:IntermediateCatchEvent": case "bpmn:IntermediateThrowEvent": return "Message Event";
+    case "pool": case "bpmn:Participant": return "Pool";
+    case "lane": case "bpmn:Lane": return "Lane";
+    default: return type;
+  }
+}
+
+/**
+ * Map a DB evaluation attribute row + linked requirement description → frontend Requirement shape.
+ */
+function toRequirement(attr: typeof evaluationAttributes.$inferSelect, reqDescription?: string, reqQuestion?: string) {
+  const applicable = attr.targetScope || "";
+  return {
+    id: String(attr.id),
+    requirement: reqDescription || attr.label,
+    question: reqQuestion,
+    category: attr.category || "General",
+    subcategory: attr.subcategory || "",
+    external_id: attr.externalId || "",
+    bpmn_mapping: {
+      task: applicable.includes("Task"),
+      message_event: applicable.includes("Message Event"),
+      pool: applicable.includes("Pool"),
+      lane: applicable.includes("Lane"),
+    },
+    further_specification: attr.furtherSpecification || "",
+    bpmn_annotation: attr.annotationTemplate || attr.label,
+    bpmn_template: buildTemplate(attr),
+  };
+}
+
+function buildTemplate(attr: typeof evaluationAttributes.$inferSelect): string {
+  if (attr.dataType === "Dropdown" && attr.options) {
+    return `Dropdown[${attr.options}]`;
+  }
+  if (attr.dataType === "TextInput") return "TextInput";
+  return "BooleanToggle";
+}
+
+export const Route = createFileRoute("/api/evaluation-attributes")({
+  server: {
+    handlers: {
+      GET: async ({ request }) => {
+        const url = new URL(request.url);
+        const typeParam = url.searchParams.get("type");
+
+        const query = db
+          .select({
+            attribute: evaluationAttributes,
+            requirementDescription: complianceRequirements.description,
+            requirementQuestion: complianceRequirements.question,
+          })
+          .from(evaluationAttributes)
+          .leftJoin(
+            complianceRequirementAttributes,
+            eq(evaluationAttributes.id, complianceRequirementAttributes.attributeId),
+          )
+          .leftJoin(
+            complianceRequirements,
+            eq(complianceRequirementAttributes.requirementId, complianceRequirements.id),
+          );
+
+        let rows: {
+          attribute: typeof evaluationAttributes.$inferSelect;
+          requirementDescription: string | null;
+          requirementQuestion: string | null;
+        }[];
+
+        if (typeParam) {
+          const searchTerm = `%${typeToApplicableFor(typeParam)}%`;
+          rows = query.where(like(evaluationAttributes.targetScope, searchTerm)).all();
+        } else {
+          rows = query.all();
+        }
+
+        const result = rows.map(({ attribute, requirementDescription, requirementQuestion }) => {
+          return toRequirement(attribute, requirementDescription || undefined, requirementQuestion || undefined);
+        });
+
+        return new Response(JSON.stringify(result), {
+          headers: { "Content-Type": "application/json" },
+        });
+      },
+    },
+  },
+});
