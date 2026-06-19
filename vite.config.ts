@@ -6,19 +6,19 @@ import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
 const config = defineConfig({
-        base: "/modeler/",
-        resolve: {
-                tsconfigPaths: true,
-        },
-        plugins: [
-                devtools(),
-                nitro({
-                        preset: "node-server",
-                }),
-                tailwindcss(),
-                tanstackStart(),
-                viteReact(),
-        ],
+	base: "/modeler/",
+	resolve: {
+		tsconfigPaths: true,
+	},
+	plugins: [
+		devtools(),
+		nitro({
+			preset: "node-server",
+		}),
+		tailwindcss(),
+		tanstackStart(),
+		viteReact(),
+	],
 });
 
 export default config;

@@ -1,5 +1,5 @@
 export const demoBpmnFiles = {
-  "sensor-data-collection": `<?xml version="1.0" encoding="UTF-8"?>
+	"sensor-data-collection": `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0k2e32c" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.47.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
   <bpmn:collaboration id="Collaboration_1c5i8m2">
     <bpmn:participant id="Participant_1p1bohj" name="Sensor Pipeline" processRef="Process_1pqhouy" />

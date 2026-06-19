@@ -1,47 +1,16 @@
 import {
+	ArrowCounterClockwiseIcon,
 	ArrowsOutIcon,
+	CaretDownIcon,
+	CheckIcon,
 	DownloadIcon,
 	GridFourIcon,
+	ListIcon,
 	PencilSimpleIcon,
 	UploadIcon,
-	List,
-	CaretDown,
-	Check,
-	ArrowCounterClockwise,
 } from "@phosphor-icons/react";
 import * as Select from "@radix-ui/react-select";
-
-interface BusinessProcess {
-	id: number;
-	name: string;
-}
-
-interface AuditAssessment {
-	id: number;
-	auditType: string;
-	processId: number | null;
-	processName: string | null;
-}
-
-interface AppHeaderProps {
-	activeView: "editor" | "matrix";
-	onViewChange: (view: "editor" | "matrix") => void;
-	onFileImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	onExport: () => void;
-	onReposition: () => void;
-	onReset?: () => void;
-	elementsCount: number;
-	onToggleSidebar?: () => void;
-	sidebarOpen?: boolean;
-	businessProcesses: BusinessProcess[];
-	activeBusinessProcessId: number | null;
-	onBusinessProcessChange: (id: number) => void;
-	auditAssessments: AuditAssessment[];
-	activeAuditAssessmentId: number | null;
-	onAuditAssessmentChange: (id: number) => void;
-	onCreateAuditAssessment: (type: "To-Be" | "As-Is") => void;
-	isLoading: boolean;
-}
+import type { AppHeaderProps } from "#/lib/types";
 
 export default function AppHeader({
 	activeView,
@@ -62,9 +31,11 @@ export default function AppHeader({
 	onCreateAuditAssessment,
 	isLoading,
 }: AppHeaderProps) {
-
 	return (
-		<header className="sticky top-0 z-50 bg-white" style={{ boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px' }}>
+		<header
+			className="sticky top-0 z-50 bg-white"
+			style={{ boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" }}
+		>
 			<style>{`
 				@keyframes loading-sweep {
 					0% { transform: translateX(-100%); }
@@ -158,22 +129,33 @@ export default function AppHeader({
 				}
 			`}</style>
 			{isLoading && (
-				<div className="absolute top-0 left-0 w-full h-[2px] bg-[#171717]/10 z-50 overflow-hidden">
-					<div className="h-full bg-[#0a72ef] animate-loading-sweep" style={{ width: '40%' }} />
+				<div className="absolute top-0 left-0 w-full h-[2px] bg-neutral-900/10 z-50 overflow-hidden">
+					<div
+						className="h-full bg-[#0a72ef] animate-loading-sweep"
+						style={{ width: "40%" }}
+					/>
 				</div>
 			)}
-			<div className="h-[2px] bg-[#171717]/10" />
+			<div className="h-[2px] bg-neutral-900/10" />
 			<div className="flex items-center justify-between px-4 lg:px-6 py-3">
 				<div className="flex items-center gap-3">
-					<h1 className="text-base font-semibold leading-tight text-[#171717]" style={{ letterSpacing: '-0.32px' }}>
+					<h1
+						className="text-base font-semibold leading-tight text-neutral-900"
+						style={{ letterSpacing: "-0.32px" }}
+					>
 						Security-Aware BPMN Modeler
 					</h1>
 				</div>
 
 				<div className="flex items-center gap-2 lg:gap-3">
 					{/* Business Process Switcher */}
-					<div className="flex items-center gap-1.5 bg-[#fafafa] p-1 rounded-md" style={{ boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px' }}>
-						<span className="text-[10px] font-bold text-[#666666] px-1.5 hidden md:inline">Process</span>
+					<div
+						className="flex items-center gap-1.5 bg-neutral-50 p-1 rounded-md"
+						style={{ boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" }}
+					>
+						<span className="text-[10px] font-bold text-neutral-500 px-1.5 hidden md:inline">
+							Process
+						</span>
 						<Select.Root
 							value={String(activeBusinessProcessId ?? "")}
 							onValueChange={(val) => {
@@ -185,17 +167,21 @@ export default function AppHeader({
 							<Select.Trigger className="select-trigger">
 								<Select.Value />
 								<Select.Icon>
-									<CaretDown className="w-3.5 h-3.5 text-[#666666]" />
+									<CaretDownIcon className="w-3.5 h-3.5 text-neutral-500" />
 								</Select.Icon>
 							</Select.Trigger>
 							<Select.Portal>
 								<Select.Content className="select-content">
 									<Select.Viewport className="select-viewport">
 										{businessProcesses.map((bp) => (
-											<Select.Item key={bp.id} value={String(bp.id)} className="select-item">
+											<Select.Item
+												key={bp.id}
+												value={String(bp.id)}
+												className="select-item"
+											>
 												<Select.ItemText>{bp.name}</Select.ItemText>
 												<Select.ItemIndicator className="select-item-indicator">
-													<Check className="w-3.5 h-3.5" weight="bold" />
+													<CheckIcon className="w-3.5 h-3.5" weight="bold" />
 												</Select.ItemIndicator>
 											</Select.Item>
 										))}
@@ -205,12 +191,12 @@ export default function AppHeader({
 						</Select.Root>
 
 						{/* Small vertical divider */}
-						<div className="w-[1px] h-4 bg-[#e5e5e5]" />
+						<div className="w-[1px] h-4 bg-neutral-200" />
 
 						{/* Import button inside the switcher */}
-						<label 
-							className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#666666] hover:text-[#171717] hover:bg-white hover:shadow-xs rounded-md cursor-pointer transition-all border border-transparent hover:border-[#ebebeb]"
-							style={{ height: '28px', lineHeight: 1 }}
+						<label
+							className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-neutral-500 hover:text-neutral-900 hover:bg-white hover:shadow-xs rounded-md cursor-pointer transition-all border border-transparent hover:border-neutral-200"
+							style={{ height: "28px", lineHeight: 1 }}
 							title="Import New BPMN Business Process"
 						>
 							<UploadIcon className="w-3.5 h-3.5" />
@@ -225,8 +211,13 @@ export default function AppHeader({
 					</div>
 
 					{/* Audit Assessment Session Switcher */}
-					<div className="flex items-center gap-1.5 bg-[#fafafa] p-1 rounded-md" style={{ boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px' }}>
-						<span className="text-[10px] font-bold text-[#666666] px-1.5 hidden md:inline">Session</span>
+					<div
+						className="flex items-center gap-1.5 bg-neutral-50 p-1 rounded-md"
+						style={{ boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" }}
+					>
+						<span className="text-[10px] font-bold text-neutral-500 px-1.5 hidden md:inline">
+							Session
+						</span>
 						<Select.Root
 							value={String(activeAuditAssessmentId ?? "")}
 							onValueChange={(val) => {
@@ -244,14 +235,16 @@ export default function AppHeader({
 							<Select.Trigger className="select-trigger">
 								<Select.Value />
 								<Select.Icon>
-									<CaretDown className="w-3.5 h-3.5 text-[#666666]" />
+									<CaretDownIcon className="w-3.5 h-3.5 text-neutral-500" />
 								</Select.Icon>
 							</Select.Trigger>
 							<Select.Portal>
 								<Select.Content className="select-content">
 									<Select.Viewport className="select-viewport">
 										{(() => {
-											const filtered = auditAssessments.filter((a) => a.processId === activeBusinessProcessId);
+											const filtered = auditAssessments.filter(
+												(a) => a.processId === activeBusinessProcessId,
+											);
 											const counts: Record<string, number> = {};
 											const labels: Record<number, string> = {};
 											for (const a of filtered) {
@@ -260,24 +253,35 @@ export default function AppHeader({
 											const seen: Record<string, number> = {};
 											for (const a of filtered) {
 												seen[a.auditType] = (seen[a.auditType] || 0) + 1;
-												labels[a.id] = counts[a.auditType] > 1
-													? `${a.auditType} ${seen[a.auditType]}`
-													: a.auditType;
+												labels[a.id] =
+													counts[a.auditType] > 1
+														? `${a.auditType} ${seen[a.auditType]}`
+														: a.auditType;
 											}
 											return filtered.map((a) => (
-												<Select.Item key={a.id} value={String(a.id)} className="select-item">
+												<Select.Item
+													key={a.id}
+													value={String(a.id)}
+													className="select-item"
+												>
 													<Select.ItemText>{labels[a.id]}</Select.ItemText>
 													<Select.ItemIndicator className="select-item-indicator">
-														<Check className="w-3.5 h-3.5" weight="bold" />
+														<CheckIcon className="w-3.5 h-3.5" weight="bold" />
 													</Select.ItemIndicator>
 												</Select.Item>
 											));
 										})()}
 										<Select.Separator className="select-separator" />
-										<Select.Item value="create-to-be" className="select-item select-item-action">
+										<Select.Item
+											value="create-to-be"
+											className="select-item select-item-action"
+										>
 											<Select.ItemText>+ New To-Be Session</Select.ItemText>
 										</Select.Item>
-										<Select.Item value="create-as-is" className="select-item select-item-action">
+										<Select.Item
+											value="create-as-is"
+											className="select-item select-item-action"
+										>
 											<Select.ItemText>+ New As-Is Session</Select.ItemText>
 										</Select.Item>
 									</Select.Viewport>
@@ -290,11 +294,11 @@ export default function AppHeader({
 						<button
 							type="button"
 							onClick={onToggleSidebar}
-							className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md text-[#666666] hover:text-[#171717] hover:bg-[#fafafa]"
-							style={{ borderRadius: '6px' }}
+							className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50"
+							style={{ borderRadius: "6px" }}
 							title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
 						>
-							<List className="w-5 h-5" />
+							<ListIcon className="w-5 h-5" />
 						</button>
 					)}
 
@@ -302,22 +306,28 @@ export default function AppHeader({
 						type="button"
 						onClick={onExport}
 						disabled={elementsCount === 0}
-						className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#666666] hover:text-[#171717] hover:bg-[#fafafa] rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-						style={{ borderRadius: '6px' }}
+						className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+						style={{ borderRadius: "6px" }}
 						title="Export enriched BPMN"
 					>
 						<DownloadIcon className="w-4 h-4" />
 						<span>Export</span>
 					</button>
 
-					<div className="flex items-center gap-0.5 p-0.5 bg-[#fafafa]" style={{ borderRadius: '6px', boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px' }}>
+					<div
+						className="flex items-center gap-0.5 p-0.5 bg-neutral-50"
+						style={{
+							borderRadius: "6px",
+							boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
+						}}
+					>
 						<button
 							type="button"
 							onClick={() => onViewChange("editor")}
 							className={`flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-md transition-all ${
 								activeView === "editor"
-									? "bg-white text-[#171717] shadow-sm"
-									: "text-[#666666] hover:text-[#171717]"
+									? "bg-white text-neutral-900 shadow-sm"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 						>
 							<PencilSimpleIcon className="w-3.5 h-3.5" />
@@ -328,8 +338,8 @@ export default function AppHeader({
 							onClick={() => onViewChange("matrix")}
 							className={`flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-md transition-all ${
 								activeView === "matrix"
-									? "bg-white text-[#171717] shadow-sm"
-									: "text-[#666666] hover:text-[#171717]"
+									? "bg-white text-neutral-900 shadow-sm"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 						>
 							<GridFourIcon className="w-3.5 h-3.5" />
@@ -341,8 +351,8 @@ export default function AppHeader({
 						<button
 							type="button"
 							onClick={onReposition}
-							className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#666666] hover:text-[#171717] hover:bg-[#fafafa] rounded-md transition-colors"
-							style={{ borderRadius: '6px' }}
+							className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 rounded-md transition-colors"
+							style={{ borderRadius: "6px" }}
 							title="Auto-arrange annotations"
 						>
 							<ArrowsOutIcon className="w-4 h-4" />
@@ -354,11 +364,11 @@ export default function AppHeader({
 						<button
 							type="button"
 							onClick={onReset}
-							className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#ef4444] hover:text-[#b91c1c] hover:bg-[#fef2f2] rounded-md transition-colors"
-							style={{ borderRadius: '6px' }}
+							className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+							style={{ borderRadius: "6px" }}
 							title="Reset process model answers"
 						>
-							<ArrowCounterClockwise className="w-4 h-4" />
+							<ArrowCounterClockwiseIcon className="w-4 h-4" />
 							<span>Reset Model</span>
 						</button>
 					)}

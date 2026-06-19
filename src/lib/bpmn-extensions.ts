@@ -1,20 +1,9 @@
+import { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR } from "./constants";
 import { store } from "./store";
-import type { AnsweredComplianceRequirement as AnsweredRequirement, ComplianceRequirement as Requirement } from "./types";
-
-// ─── Category Color Mapping ────────────────────────────────────────
-// Each requirement subcategory gets a distinct stroke/fill color pair,
-// matching the processmodelEC.bpmn reference model.
-const CATEGORY_COLORS: Record<string, { stroke: string; fill: string }> = {
-	"IoT Ecosystem Requirements": { stroke: "#205022", fill: "#c8e6c9" },
-	"Identification and Authentication": { stroke: "#205022", fill: "#c8e6c9" },
-	"Use Control": { stroke: "#6b3c00", fill: "#ffe0b2" },
-	"System Integrity": { stroke: "#5D445D", fill: "#16405B" },
-	"Data Confidentiality": { stroke: "#2E343B", fill: "#7E7E7E" },
-	"Restricted Data Flow": { stroke: "#634806", fill: "#AA8F00" },
-	"Timely Response to Events": { stroke: "#AA2E00", fill: "#D46A43" },
-	"Resource Availability": { stroke: "#5b176d", fill: "#e1bee7" },
-};
-const DEFAULT_COLOR = { stroke: "#2E343B", fill: "#7E7E7E" };
+import type {
+	AnsweredComplianceRequirement as AnsweredRequirement,
+	ComplianceRequirement as Requirement,
+} from "./types";
 
 function slugify(text: string): string {
 	return text
@@ -93,7 +82,10 @@ function findCreateParent(
 	}
 
 	// Bare Process diagram (no Collaboration) — rootElement IS the Process
-	if (rootElement?.type === "bpmn:Process" || rootElement?.type === "bpmn:SubProcess") {
+	if (
+		rootElement?.type === "bpmn:Process" ||
+		rootElement?.type === "bpmn:SubProcess"
+	) {
 		return rootElement;
 	}
 
@@ -111,9 +103,7 @@ function estimateAnnotationSize(text: string): {
 	const lines = text.split("\n");
 	const longestLine = Math.max(...lines.map((l) => l.length));
 	return {
-		// Increase max width from 250 to 400 to prevent awkward wrapping
-		// Use an 8px multiplier per character for a bit more comfortable space
-		width: Math.max(120, Math.min(400, longestLine * 8 + 20)),
+		width: Math.max(120, Math.min(250, longestLine * 8 + 20)),
 		height: Math.max(30, lines.length * 18 + 14),
 	};
 }
@@ -302,8 +292,6 @@ function collectPlacedShapeBounds(
 		.map((el: any) => getElementBounds(el));
 }
 
-// ─── Main API ──────────────────────────────────────────────────────
-
 /**
  * Create or update a colored DataObjectReference + TextAnnotation for a
  * requirement answer. Groups answers by subcategory: one data object per
@@ -357,11 +345,10 @@ export async function createSecurityDataObject(
 
 		if (!annotationText) return;
 
-		const colors = CATEGORY_COLORS[category] || DEFAULT_COLOR;
+		const colors = CATEGORY_COLORS[category] || DEFAULT_CATEGORY_COLOR;
 		const existingDataObject = elementRegistry.get(dataObjectRefId);
 
 		if (existingDataObject) {
-			// ── Update existing annotation ──
 			const existingAnnotation = elementRegistry.get(annotationId);
 			if (existingAnnotation) {
 				modeling.updateProperties(existingAnnotation, { text: annotationText });
@@ -374,7 +361,6 @@ export async function createSecurityDataObject(
 				});
 			}
 		} else {
-			// ── Create new DataObjectReference + TextAnnotation ──
 			const rootElement = canvas.getRootElement();
 			const isPoolOrLane =
 				element.type === "bpmn:Participant" || element.type === "bpmn:Lane";
@@ -395,7 +381,6 @@ export async function createSecurityDataObject(
 			let dataObjectPos: { x: number; y: number };
 
 			if (isPoolOrLane) {
-				// Find existing data objects inside this lane/pool and stack below them
 				const existingDOs = elementRegistry
 					.getAll()
 					.filter(
@@ -406,7 +391,6 @@ export async function createSecurityDataObject(
 				const laneStartX = elementBounds.x + 80; // Increased from 40 to 80 to clear the lane header
 				let nextY = elementBounds.y + 20;
 
-				// Account for each existing data object and its annotation
 				for (const existing of existingDOs) {
 					const doBounds = getElementBounds(existing);
 					const annId = existing.id.replace("DataObjectRef_", "Annotation_");
@@ -418,8 +402,6 @@ export async function createSecurityDataObject(
 
 				dataObjectPos = { x: laneStartX, y: nextY };
 			} else {
-				// Use combined size (data object + gap + annotation) for collision detection
-				// so the annotation doesn't overlap with process elements
 				const annotationSize = estimateAnnotationSize(annotationText);
 				const combinedSize = {
 					width: dataObjectSize.width + 25 + annotationSize.width, // Increased annotation gap from 10 to 25
@@ -433,7 +415,6 @@ export async function createSecurityDataObject(
 				);
 			}
 
-			// Create DataObjectReference
 			const dataObjectRefShape = elementFactory.createShape({
 				type: "bpmn:DataObjectReference",
 				id: dataObjectRefId,
@@ -449,10 +430,8 @@ export async function createSecurityDataObject(
 				createParent,
 			);
 
-			// Apply category color
 			modeling.setColor(dataObjectRefShape, colors);
 
-			// Connect data object → element via DataInputAssociation (tasks/events only)
 			const isTaskOrEvent =
 				element.type === "bpmn:Task" ||
 				element.type === "bpmn:IntermediateCatchEvent" ||
@@ -469,7 +448,6 @@ export async function createSecurityDataObject(
 				}
 			}
 
-			// Create TextAnnotation directly to the right of its data object
 			const annotationSize = estimateAnnotationSize(annotationText);
 			const annotationPos = {
 				x: dataObjectPos.x + dataObjectSize.width + 25,
@@ -491,12 +469,10 @@ export async function createSecurityDataObject(
 				createParent,
 			);
 
-			// Connect data object → annotation via Association
 			modeling.connect(dataObjectRefShape, textAnnotation, {
 				type: "bpmn:Association",
 			});
 
-			// Expand pool/lane if needed
 			expandContainerIfNeeded(modeling, element, {
 				x: dataObjectPos.x,
 				y: dataObjectPos.y,
@@ -586,14 +562,14 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 			height: number;
 		}> = [];
 
-				// Collect all our data objects (our IDs: DataObjectRef_<elementId>_<category>)
-				const dataObjects = allElements.filter(
-					(el: any) =>
-						el.type === "bpmn:DataObjectReference" &&
-						/^DataObjectRef_\w+_\w/.test(el.id || ""),
-				);
+		// Collect all our data objects (our IDs: DataObjectRef_<elementId>_<category>)
+		const dataObjects = allElements.filter(
+			(el: any) =>
+				el.type === "bpmn:DataObjectReference" &&
+				/^DataObjectRef_\w+_\w/.test(el.id || ""),
+		);
 
-		// ── Step 1: Shift process elements right in lanes that have data objects ──
+		// Make room for data objects by shifting process elements in lanes
 		const laneGroups = new Map<string, any[]>();
 		for (const dobj of dataObjects) {
 			const m = dobj.id.match(/^DataObjectRef_(.+?)_([a-z_]+)$/);
@@ -661,7 +637,7 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 			}
 		}
 
-		// ── Step 2: Position each data object + its annotation as a pair ──
+		// Position each data object + annotation pair
 		for (const dobj of dataObjects) {
 			const m = dobj.id.match(/^DataObjectRef_(.+?)_([a-z_]+)$/);
 			if (!m) continue;
@@ -682,7 +658,6 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 			const isLane =
 				targetEl.type === "bpmn:Participant" || targetEl.type === "bpmn:Lane";
 
-			// Calculate position for data object
 			let doX: number, doY: number;
 
 			if (isLane) {
@@ -702,7 +677,6 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 				doX = laneX;
 				doY = nextY;
 			} else {
-				// Near the element, using combined size for collision avoidance
 				const combinedSize = {
 					width: doW + 25 + annSize.width, // Match increased gap from creation
 					height: Math.max(doH, annSize.height),
@@ -717,17 +691,13 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 				doY = pos.y;
 			}
 
-			// Move data object
-			// Move data object and its label
 			const doDx = doX - dobj.x;
 			const doDy = doY - dobj.y;
 			if (Math.abs(doDx) > 1 || Math.abs(doDy) > 1) {
 				modeling.moveShape(dobj, { x: doDx, y: doDy });
 			}
 
-			// Data object labels are separate shapes in bpmn-js, we need to move them explicitly
 			if (dobj.label) {
-				// Position label right below the data object
 				const labelX = doX + doW / 2 - (dobj.label.width || 0) / 2;
 				const labelY = doY + doH + 5;
 				const lDx = labelX - dobj.label.x;
@@ -744,7 +714,6 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 				height: doH + (dobj.label?.height || 0) + 5,
 			});
 
-			// Move annotation to right of data object
 			if (pairedAnn) {
 				const annX = doX + doW + 25; // Increased gap from 10 to 25
 				const annY = doY;
@@ -755,7 +724,6 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 					modeling.moveShape(pairedAnn, { x: annDx, y: annDy });
 				}
 
-				// Always resize to force text re-render and ensure correct dimensions
 				modeling.resizeShape(pairedAnn, {
 					x: annX,
 					y: annY,
@@ -771,7 +739,6 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 				});
 			}
 
-			// Expand container if needed
 			expandContainerIfNeeded(modeling, targetEl, {
 				x: doX,
 				y: doY,
@@ -788,7 +755,7 @@ export async function repositionAnnotations(modeler: any): Promise<void> {
 			}
 		}
 
-		// ── Step 3: Handle legacy TextAnnotation_{elementId} shapes ──
+		// Handle legacy TextAnnotation_{elementId} shapes
 		const legacyAnnotations = allElements.filter(
 			(el: any) =>
 				el.type === "bpmn:TextAnnotation" &&

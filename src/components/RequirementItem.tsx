@@ -1,4 +1,8 @@
-import { CheckCircle, Circle, XCircle } from "@phosphor-icons/react";
+import {
+	CheckCircleIcon,
+	CircleIcon,
+	XCircleIcon,
+} from "@phosphor-icons/react";
 import { InlineList } from "#/components/ui/inline-list";
 import {
 	Select,
@@ -46,7 +50,7 @@ export default function RequirementItem({
 	return (
 		<div
 			className={`group relative p-4 rounded-lg transition-all duration-200 mb-3 last:mb-0 ${
-				isAnswered ? "" : "hover:bg-[#fafafa]/50"
+				isAnswered ? "" : "hover:bg-neutral-50/50"
 			}`}
 			style={{
 				background: isAnswered ? "#fafafa" : "transparent",
@@ -56,32 +60,32 @@ export default function RequirementItem({
 			<div className="flex items-start gap-3 mb-3">
 				<div className="mt-0.5">
 					{isNotRelevant ? (
-						<XCircle
-							className="w-5 h-5 text-[#808080] shrink-0"
+						<XCircleIcon
+							className="w-5 h-5 text-neutral-500 shrink-0"
 							weight="fill"
 						/>
 					) : isAnswered ? (
-						<CheckCircle
-							className="w-5 h-5 text-[#171717] shrink-0"
+						<CheckCircleIcon
+							className="w-5 h-5 text-neutral-900 shrink-0"
 							weight="fill"
 						/>
 					) : (
-						<Circle className="w-5 h-5 text-[#808080] shrink-0" />
+						<CircleIcon className="w-5 h-5 text-neutral-500 shrink-0" />
 					)}
 				</div>
 				<div className="flex-1 min-w-0">
 					{subcategory && (
-						<span className="text-[10px] font-medium text-[#666666] mb-1 block">
+						<span className="text-[10px] font-medium text-neutral-500 mb-1 block">
 							{subcategory}
 						</span>
 					)}
 					<div className="flex items-center gap-2 mb-1">
-						<span className="text-sm font-medium text-[#171717]">
+						<span className="text-sm font-medium text-neutral-900">
 							{req.bpmn_annotation}
 						</span>
 						{req.external_id && (
 							<span
-								className="text-[10px] font-mono text-[#808080] shrink-0"
+								className="text-[10px] font-mono text-neutral-500 shrink-0"
 								style={{
 									background: "#fafafa",
 									padding: "1px 4px",
@@ -93,7 +97,7 @@ export default function RequirementItem({
 						)}
 					</div>
 					<p
-						className="text-xs leading-relaxed text-[#666666]"
+						className="text-xs leading-relaxed text-neutral-500"
 						style={{ lineHeight: 1.5 }}
 					>
 						{req.question || req.requirement}
@@ -110,7 +114,7 @@ export default function RequirementItem({
 							className={`px-4 py-2 rounded-md text-xs font-medium transition-all ${
 								answer === true
 									? "text-white"
-									: "text-[#666666] hover:text-[#171717]"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 							style={{
 								background: answer === true ? "#171717" : "#ffffff",
@@ -128,7 +132,7 @@ export default function RequirementItem({
 							className={`px-4 py-2 rounded-md text-xs font-medium transition-all ${
 								answer === false
 									? "text-white"
-									: "text-[#666666] hover:text-[#171717]"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 							style={{
 								background: answer === false ? "#171717" : "#ffffff",
@@ -146,7 +150,7 @@ export default function RequirementItem({
 							className={`col-span-2 px-4 py-2 rounded-md text-xs font-medium transition-all ${
 								isNotRelevant
 									? "text-white"
-									: "text-[#666666] hover:text-[#171717]"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 							style={{
 								background: isNotRelevant ? "#808080" : "#ffffff",
@@ -202,7 +206,7 @@ export default function RequirementItem({
 							className={`h-8 px-4 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
 								isNotRelevant
 									? "text-white"
-									: "text-[#666666] hover:text-[#171717]"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 							style={{
 								background: isNotRelevant ? "#808080" : "#ffffff",
@@ -231,7 +235,7 @@ export default function RequirementItem({
 							className={`h-8 px-4 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
 								isNotRelevant
 									? "text-white"
-									: "text-[#666666] hover:text-[#171717]"
+									: "text-neutral-500 hover:text-neutral-900"
 							}`}
 							style={{
 								background: isNotRelevant ? "#808080" : "#ffffff",

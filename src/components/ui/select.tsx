@@ -38,7 +38,11 @@ function SelectTrigger({
 				"data-[placeholder]:text-[#808080] flex w-fit items-center justify-between gap-2 rounded-md px-3 py-2 text-sm whitespace-nowrap outline-none focus-visible:ring-[2px] focus-visible:ring-[hsla(212,100%,48%,1)] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
-			style={{ background: '#ffffff', boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px', color: '#171717' }}
+			style={{
+				background: "#ffffff",
+				boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
+				color: "#171717",
+			}}
 			{...props}
 		>
 			{children}
@@ -66,7 +70,7 @@ function SelectContent({
 						"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
 					className,
 				)}
-				style={{ background: '#ffffff', border: '1px solid #ebebeb' }}
+				style={{ background: "#ffffff", border: "1px solid #ebebeb" }}
 				position={position}
 				align={align}
 				{...props}
@@ -95,7 +99,7 @@ function SelectLabel({
 		<SelectPrimitive.Label
 			data-slot="select-label"
 			className={cn("px-2 py-1.5 text-xs", className)}
-			style={{ color: '#666666' }}
+			style={{ color: "#666666" }}
 			{...props}
 		/>
 	);
@@ -113,7 +117,7 @@ function SelectItem({
 				"relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
 				className,
 			)}
-			style={{ color: '#171717' }}
+			style={{ color: "#171717" }}
 			{...props}
 		>
 			<span
@@ -174,7 +178,7 @@ function SelectScrollDownButton({
 			{...props}
 		>
 			<CaretDown className="size-4" />
-	</SelectPrimitive.ScrollDownButton>
+		</SelectPrimitive.ScrollDownButton>
 	);
 }
 

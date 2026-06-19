@@ -20,7 +20,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body className="bg-white" style={{ color: '#171717' }}>
+			<body className="bg-white" style={{ color: "#171717" }}>
 				{children}
 				<Scripts />
 			</body>

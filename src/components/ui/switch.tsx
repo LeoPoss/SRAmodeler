@@ -11,7 +11,7 @@ const Switch = React.forwardRef<
 			"peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-[hsla(212,100%,48%,1)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#171717] data-[state=unchecked]:bg-[#ebebeb]",
 			className,
 		)}
-		style={{ boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px' }}
+		style={{ boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" }}
 		{...props}
 		ref={ref}
 	>

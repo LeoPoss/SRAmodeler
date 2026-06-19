@@ -19,17 +19,13 @@ import {
 	setSelectedElement,
 	store,
 } from "#/lib/store";
-import type { ComplianceRequirement as Requirement } from "#/lib/types";
+import type {
+	BpmnCanvasHandle,
+	BpmnModeler,
+	ComplianceRequirement as Requirement,
+} from "#/lib/types";
 
-export type BpmnModeler = InstanceType<typeof import("bpmn-js/lib/Modeler").default>;
-
-export interface BpmnCanvasHandle {
-	getModeler: () => BpmnModeler | null;
-	getXml: () => Promise<string>;
-	syncSelection: () => void;
-	repositionAnnotations: () => Promise<void>;
-	rebuildAnnotations: (force?: boolean) => Promise<void>;
-}
+export type { BpmnCanvasHandle, BpmnModeler };
 
 interface BpmnCanvasProps {
 	xml?: string;
@@ -46,7 +42,9 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 		const [error, setError] = useState<string | null>(null);
 		const isRepositioningRef = useRef(false);
 
-		const rebuildRef = useRef<(force?: boolean) => Promise<void>>(async () => {});
+		const rebuildRef = useRef<(force?: boolean) => Promise<void>>(
+			async () => {},
+		);
 		const cleanXmlRef = useRef<() => Promise<string>>(async () => "");
 
 		const rebuildAssessmentAnnotations = useCallback(async (force = false) => {
@@ -54,7 +52,10 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 
 			// Do not run if no definitions are loaded in the modeler yet
 			try {
-				if (typeof modelerRef.current.getDefinitions !== "function" || !modelerRef.current.getDefinitions()) {
+				if (
+					typeof modelerRef.current.getDefinitions !== "function" ||
+					!modelerRef.current.getDefinitions()
+				) {
 					return;
 				}
 			} catch {
@@ -65,15 +66,20 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 			isRepositioningRef.current = true;
 			try {
 				const modeling = modelerRef.current.get("modeling") as any;
-				const elementRegistry = modelerRef.current.get("elementRegistry") as any;
+				const elementRegistry = modelerRef.current.get(
+					"elementRegistry",
+				) as any;
 
 				// 1. Gather and remove existing security annotations only (not original BPMN elements).
-				// Our annotation IDs: DataObjectRef_<elementId>_<categorySlug>
-				// Original BPMN IDs: DataObjectReference_<suffix> (starts with "DataObjectReference_" not "DataObjectRef_")
-				const shapesToRemove = elementRegistry.getAll().filter((el: any) =>
-					(el.type === "bpmn:DataObjectReference" && /^DataObjectRef_\w+_\w/.test(el.id || "")) ||
-					(el.type === "bpmn:TextAnnotation" && el.id?.startsWith("Annotation_"))
-				);
+				const shapesToRemove = elementRegistry
+					.getAll()
+					.filter(
+						(el: any) =>
+							(el.type === "bpmn:DataObjectReference" &&
+								/^DataObjectRef_\w+_\w/.test(el.id || "")) ||
+							(el.type === "bpmn:TextAnnotation" &&
+								el.id?.startsWith("Annotation_")),
+					);
 
 				for (const shape of shapesToRemove) {
 					try {
@@ -86,7 +92,6 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 				// 2. Fetch the newly loaded answered requirements from the store
 				const savedAnswers = store.getAnsweredComplianceRequirements();
 				const requirements = store.getComplianceRequirements();
-
 
 				if (savedAnswers.length > 0 && requirements.length > 0) {
 					// Group answers by element to batch them
@@ -119,7 +124,6 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 						}
 					}
 				}
-
 			} catch (err) {
 				console.error("Failed to rebuild assessment annotations:", err);
 			} finally {
@@ -149,20 +153,27 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 						container: containerRef.current,
 					});
 
-					modelerRef.current.on("selection.changed", (e: { newSelection: unknown[] }) => {
-						const element = e.newSelection[0] as { id: string; type: string; businessObject?: { name?: string } } | undefined;
-						if (element) {
-							setSelectedElement({
-								id: element.id,
-								name: element.businessObject?.name || element.id,
-								type: element.type,
-							});
-						} else {
-							setSelectedElement(null);
-						}
-					});
-
-
+					modelerRef.current.on(
+						"selection.changed",
+						(e: { newSelection: unknown[] }) => {
+							const element = e.newSelection[0] as
+								| {
+										id: string;
+										type: string;
+										businessObject?: { name?: string };
+								  }
+								| undefined;
+							if (element) {
+								setSelectedElement({
+									id: element.id,
+									name: element.businessObject?.name || element.id,
+									type: element.type,
+								});
+							} else {
+								setSelectedElement(null);
+							}
+						},
+					);
 
 					const elementRegistry = modelerRef.current.get("elementRegistry");
 					setElementRegistry(elementRegistry);
@@ -201,7 +212,9 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 			const updateOverlays = () => {
 				try {
 					const overlays = modelerRef.current?.get("overlays") as any;
-					const elementRegistry = modelerRef.current?.get("elementRegistry") as any;
+					const elementRegistry = modelerRef.current?.get(
+						"elementRegistry",
+					) as any;
 					if (!overlays || !elementRegistry) return;
 
 					// Clear existing compliance overlays
@@ -258,11 +271,8 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 				rebuildAssessmentAnnotations(true);
 			};
 
-			// Initial render + subscribe to store updates
 			handleStoreUpdate();
 			const unsub = store.subscribe(handleStoreUpdate);
-
-			// Attach to import.done event because importing new XML clears overlays
 			modelerRef.current.on("import.done", updateOverlays);
 
 			return () => {
@@ -277,13 +287,20 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 			isRepositioningRef.current = true;
 			try {
 				const modeling = modelerRef.current.get("modeling") as any;
-				const elementRegistry = modelerRef.current.get("elementRegistry") as any;
+				const elementRegistry = modelerRef.current.get(
+					"elementRegistry",
+				) as any;
 
 				// 1. Gather compliance annotation shapes and connections (our annotations only)
-				const shapesToRemove = elementRegistry.getAll().filter((el: any) =>
-					(el.type === "bpmn:DataObjectReference" && /^DataObjectRef_\w+_\w/.test(el.id || "")) ||
-					(el.type === "bpmn:TextAnnotation" && el.id?.startsWith("Annotation_"))
-				);
+				const shapesToRemove = elementRegistry
+					.getAll()
+					.filter(
+						(el: any) =>
+							(el.type === "bpmn:DataObjectReference" &&
+								/^DataObjectRef_\w+_\w/.test(el.id || "")) ||
+							(el.type === "bpmn:TextAnnotation" &&
+								el.id?.startsWith("Annotation_")),
+					);
 
 				// Remove shapes
 				for (const shape of shapesToRemove) {
@@ -295,7 +312,9 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 				}
 
 				// 2. Save the clean XML
-				const { xml: cleanXml } = await modelerRef.current.saveXML({ format: true });
+				const { xml: cleanXml } = await modelerRef.current.saveXML({
+					format: true,
+				});
 
 				// 3. Rebuild the annotations back
 				await rebuildRef.current(true);
@@ -338,7 +357,7 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 
 		useEffect(() => {
 			if (!loading && modelerRef.current && auditAssessmentId !== undefined) {
-				rebuildAssessmentAnnotations(true);  // force=true to bypass isRepositioningRef guard
+				rebuildAssessmentAnnotations(true); // force=true to bypass isRepositioningRef guard
 			}
 		}, [auditAssessmentId, loading, rebuildAssessmentAnnotations]);
 
@@ -384,8 +403,6 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 			};
 		}, []);
 
-
-
 		// Just reposition text annotations - no BPMN auto-layout
 		const applyLayout = async () => {
 			if (!modelerRef.current) return;
@@ -396,7 +413,6 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 			}
 		};
 
-		// Expose methods via ref instead of window globals
 		useImperativeHandle(ref, () => ({
 			getModeler: () => modelerRef.current,
 			getXml: getCleanXml,
@@ -405,7 +421,9 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 				if (!sel || !modelerRef.current) return;
 				const selection = modelerRef.current.get("selection") as any;
 				const canvas = modelerRef.current.get("canvas") as any;
-				const elementRegistry = modelerRef.current.get("elementRegistry") as any;
+				const elementRegistry = modelerRef.current.get(
+					"elementRegistry",
+				) as any;
 				const element = elementRegistry.get(sel.id);
 				if (!element) return;
 				canvas.scrollToElement(element);
@@ -419,18 +437,28 @@ const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
 			<div className="relative w-full h-full">
 				<div ref={containerRef} className="w-full h-full bpmn-canvas" />
 				{loading && (
-					<div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: '#ffffff' }}>
+					<div
+						className="absolute inset-0 flex items-center justify-center z-10"
+						style={{ background: "#ffffff" }}
+					>
 						<div className="text-center">
-							<div className="w-10 h-10 border-4 border-[#ebebeb] border-t-[#171717] rounded-full animate-spin mx-auto mb-4" />
-							<p style={{ color: '#666666' }}>Loading BPMN Modeler</p>
+							<div className="w-10 h-10 border-4 border-neutral-200 border-t-neutral-900 rounded-full animate-spin mx-auto mb-4" />
+							<p style={{ color: "#666666" }}>Loading BPMN Modeler</p>
 						</div>
 					</div>
 				)}
 				{error && (
-					<div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: '#fef2f2' }}>
+					<div
+						className="absolute inset-0 flex items-center justify-center z-10"
+						style={{ background: "#fef2f2" }}
+					>
 						<div className="text-center p-6">
-							<p className="font-semibold mb-2" style={{ color: '#dc2626' }}>Failed to load BPMN viewer</p>
-							<p className="text-sm" style={{ color: '#b91c1c' }}>{error}</p>
+							<p className="font-semibold mb-2" style={{ color: "#dc2626" }}>
+								Failed to load BPMN viewer
+							</p>
+							<p className="text-sm" style={{ color: "#b91c1c" }}>
+								{error}
+							</p>
 						</div>
 					</div>
 				)}

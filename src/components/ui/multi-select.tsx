@@ -39,7 +39,7 @@ export function MultiSelect({
 						<span
 							key={val}
 							className="inline-flex items-center gap-1 px-2.5 py-1 text-sm rounded-md"
-							style={{ background: '#171717', color: '#ffffff' }}
+							style={{ background: "#171717", color: "#ffffff" }}
 						>
 							{val}
 							<button
@@ -59,10 +59,10 @@ export function MultiSelect({
 					type="button"
 					onClick={() => setIsOpen(!isOpen)}
 					className="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm text-left"
-					style={{ 
-						background: '#ffffff', 
-						boxShadow: 'rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
-						color: currentValues.length === 0 ? '#808080' : '#171717'
+					style={{
+						background: "#ffffff",
+						boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
+						color: currentValues.length === 0 ? "#808080" : "#171717",
 					}}
 				>
 					<span>
@@ -72,28 +72,37 @@ export function MultiSelect({
 					</span>
 					<CaretDown
 						className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-						style={{ color: '#666666' }}
+						style={{ color: "#666666" }}
 					/>
 				</button>
 
 				{isOpen && (
-					<div className="absolute z-10 w-full mt-1 rounded-md shadow-lg max-h-48 overflow-y-auto" style={{ background: '#ffffff', border: '1px solid #ebebeb' }}>
+					<div
+						className="absolute z-10 w-full mt-1 rounded-md shadow-lg max-h-48 overflow-y-auto"
+						style={{ background: "#ffffff", border: "1px solid #ebebeb" }}
+					>
 						{options.map((option) => (
 							<button
 								key={option}
 								type="button"
 								onClick={() => toggleOption(option)}
-								className={`w-full flex items-center gap-2 px-3 py-2 text-sm text-left ${currentValues.includes(option) ? '' : ''}`}
-								style={{ 
-									background: currentValues.includes(option) ? '#fafafa' : '#ffffff',
-									color: '#171717'
+								className={`w-full flex items-center gap-2 px-3 py-2 text-sm text-left ${currentValues.includes(option) ? "" : ""}`}
+								style={{
+									background: currentValues.includes(option)
+										? "#fafafa"
+										: "#ffffff",
+									color: "#171717",
 								}}
 							>
 								<span
-									className={`w-4 h-4 rounded flex-shrink-0 flex items-center justify-center ${currentValues.includes(option) ? '' : ''}`}
-									style={{ 
-										background: currentValues.includes(option) ? '#171717' : 'transparent',
-										border: currentValues.includes(option) ? 'none' : '1px solid #ebebeb'
+									className={`w-4 h-4 rounded flex-shrink-0 flex items-center justify-center ${currentValues.includes(option) ? "" : ""}`}
+									style={{
+										background: currentValues.includes(option)
+											? "#171717"
+											: "transparent",
+										border: currentValues.includes(option)
+											? "none"
+											: "1px solid #ebebeb",
 									}}
 								>
 									{currentValues.includes(option) && (
