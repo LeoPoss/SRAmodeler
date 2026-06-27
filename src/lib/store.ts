@@ -350,6 +350,16 @@ class Store {
 		});
 	}
 
+	async deleteBusinessProcess(id: number): Promise<void> {
+		const res = await fetch(`${BASE_URL}/business-processes/${id}`, {
+			method: "DELETE",
+		});
+		if (!res.ok) {
+			const body = await res.json().catch(() => ({}));
+			throw new Error(body.error || `HTTP ${res.status}`);
+		}
+	}
+
 	async loadLatestBusinessProcess(): Promise<{
 		id: number;
 		processName: string;

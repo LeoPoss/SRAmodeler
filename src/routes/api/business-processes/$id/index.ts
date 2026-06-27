@@ -62,6 +62,41 @@ export const Route = createFileRoute("/api/business-processes/$id/")({
 					headers: { "Content-Type": "application/json" },
 				});
 			},
+
+			DELETE: async ({ params }) => {
+				const id = parseInt(params.id, 10);
+
+				const existing = db
+					.select()
+					.from(businessProcesses)
+					.where(eq(businessProcesses.id, id))
+					.get();
+				if (!existing) {
+					return new Response(JSON.stringify({ error: "Not found" }), {
+						status: 404,
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+
+				if (
+					id === 1 ||
+					existing.processName === "Sensor Data Collection Demo"
+				) {
+					return new Response(
+						JSON.stringify({ error: "Cannot delete the default process model" }),
+						{
+							status: 403,
+							headers: { "Content-Type": "application/json" },
+						},
+					);
+				}
+
+				db.delete(businessProcesses)
+					.where(eq(businessProcesses.id, id))
+					.run();
+
+				return new Response(null, { status: 204 });
+			},
 		},
 	},
 });

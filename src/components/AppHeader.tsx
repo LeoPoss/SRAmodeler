@@ -7,9 +7,13 @@ import {
 	GridFourIcon,
 	ListIcon,
 	PencilSimpleIcon,
+	TrashIcon,
 	UploadIcon,
 } from "@phosphor-icons/react";
 import * as Select from "@radix-ui/react-select";
+import { useRef, useState } from "react";
+import DeleteProcessConfirmDialog from "./DeleteProcessConfirmDialog";
+import ImportConfirmDialog from "./ImportConfirmDialog";
 import type { AppHeaderProps } from "#/lib/types";
 
 export default function AppHeader({
@@ -25,12 +29,19 @@ export default function AppHeader({
 	businessProcesses,
 	activeBusinessProcessId,
 	onBusinessProcessChange,
+	onDeleteBusinessProcess,
 	auditAssessments,
 	activeAuditAssessmentId,
 	onAuditAssessmentChange,
 	onCreateAuditAssessment,
 	isLoading,
 }: AppHeaderProps) {
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+	const [importDialogOpen, setImportDialogOpen] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const activeProcess = businessProcesses.find((bp) => bp.id === activeBusinessProcessId);
 	return (
 		<header
 			className="sticky top-0 z-50 bg-white"
@@ -113,6 +124,14 @@ export default function AppHeader({
 					background-color: #ebf5ff;
 					color: #0068d6;
 				}
+				.select-item-delete {
+					color: #e00;
+					font-weight: 600;
+				}
+				.select-item-delete[data-highlighted] {
+					background-color: #fef2f2;
+					color: #e00;
+				}
 				.select-item-indicator {
 					position: absolute;
 					left: 6px;
@@ -159,6 +178,13 @@ export default function AppHeader({
 						<Select.Root
 							value={String(activeBusinessProcessId ?? "")}
 							onValueChange={(val) => {
+								if (val === "delete") {
+									if (activeProcess) {
+										setDeleteTarget({ id: activeProcess.id, name: activeProcess.name });
+										setDeleteDialogOpen(true);
+									}
+									return;
+								}
 								const id = parseInt(val, 10);
 								if (id) onBusinessProcessChange(id);
 							}}
@@ -185,6 +211,20 @@ export default function AppHeader({
 												</Select.ItemIndicator>
 											</Select.Item>
 										))}
+										{activeProcess && activeProcess.id !== 1 && (
+											<>
+												<Select.Separator className="select-separator" />
+												<Select.Item
+													value="delete"
+													className="select-item select-item-delete"
+												>
+													<Select.ItemText>
+															<TrashIcon className="w-3 h-3 inline mr-1.5" weight="bold" />
+															Delete "{activeProcess.name}"
+														</Select.ItemText>
+												</Select.Item>
+											</>
+										)}
 									</Select.Viewport>
 								</Select.Content>
 							</Select.Portal>
@@ -194,20 +234,22 @@ export default function AppHeader({
 						<div className="w-[1px] h-4 bg-neutral-200" />
 
 						{/* Import button inside the switcher */}
-						<label
+						<button
+							type="button"
+							onClick={() => setImportDialogOpen(true)}
 							className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-neutral-500 hover:text-neutral-900 hover:bg-white hover:shadow-xs rounded-md cursor-pointer transition-all border border-transparent hover:border-neutral-200"
 							style={{ height: "28px", lineHeight: 1 }}
-							title="Import New BPMN Business Process"
 						>
 							<UploadIcon className="w-3.5 h-3.5" />
 							<span className="hidden sm:inline">Import</span>
-							<input
-								type="file"
-								accept=".bpmn,.xml"
-								onChange={onFileImport}
-								className="hidden"
-							/>
-						</label>
+						</button>
+						<input
+							ref={fileInputRef}
+							type="file"
+							accept=".bpmn,.xml"
+							onChange={onFileImport}
+							className="hidden"
+						/>
 					</div>
 
 					{/* Audit Assessment Session Switcher */}
@@ -374,6 +416,24 @@ export default function AppHeader({
 					)}
 				</div>
 			</div>
+			<ImportConfirmDialog
+				isOpen={importDialogOpen}
+				onClose={() => setImportDialogOpen(false)}
+				onConfirm={() => {
+					fileInputRef.current?.click();
+				}}
+			/>
+			<DeleteProcessConfirmDialog
+				isOpen={deleteDialogOpen}
+				processName={deleteTarget?.name ?? ""}
+				onClose={() => setDeleteDialogOpen(false)}
+				onConfirm={() => {
+					if (deleteTarget) {
+						onDeleteBusinessProcess(deleteTarget.id);
+						setDeleteTarget(null);
+					}
+				}}
+			/>
 		</header>
 	);
 }

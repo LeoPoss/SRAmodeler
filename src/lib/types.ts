@@ -87,6 +87,7 @@ export interface AppHeaderProps {
 	businessProcesses: BusinessProcess[];
 	activeBusinessProcessId: number | null;
 	onBusinessProcessChange: (id: number) => void;
+	onDeleteBusinessProcess: (id: number) => void;
 	auditAssessments: AuditAssessment[];
 	activeAuditAssessmentId: number | null;
 	onAuditAssessmentChange: (id: number) => void;

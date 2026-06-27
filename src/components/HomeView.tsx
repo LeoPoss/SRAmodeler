@@ -239,6 +239,17 @@ export default function Home() {
 		await store.createAuditAssessment(type);
 	};
 
+	const handleDeleteBusinessProcess = async (id: number) => {
+		try {
+			await store.deleteBusinessProcess(id);
+			await store.fetchBusinessProcesses();
+			await store.loadLatestBusinessProcess();
+			await store.fetchAuditAssessments();
+		} catch (err) {
+			console.error("Failed to delete business process:", err);
+		}
+	};
+
 	return (
 		<div className="min-h-screen bg-white text-neutral-900">
 			<AppHeader
@@ -258,6 +269,7 @@ export default function Home() {
 				activeAuditAssessmentId={activeAuditAssessmentId}
 				onAuditAssessmentChange={handleAuditAssessmentChange}
 				onCreateAuditAssessment={handleCreateAuditAssessment}
+				onDeleteBusinessProcess={handleDeleteBusinessProcess}
 				isLoading={isStoreLoading}
 			/>
 			<div className="flex h-[calc(100vh-57px)]">
